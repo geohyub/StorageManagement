@@ -261,26 +261,100 @@ public class SqliteLogRepository : IDisposable
             _ => "timestamp"
         };
         var sortDir = query.SortDesc ? "DESC" : "ASC";
+        var dbFiles = GetRelevantDbFiles(query.From, query.To);
 
-        var allItems = new List<FileEvent>();
+        // 단일 DB 최적화: SQL LIMIT/OFFSET으로 메모리 절약
+        if (dbFiles.Count == 1)
+        {
+            return QuerySingleDb(dbFiles[0], where, parameters, sortCol, sortDir, query);
+        }
+
+        // 다중 DB: 각 DB에서 필요한 만큼만 가져와 병합
+        return QueryMultiDb(dbFiles, where, parameters, sortCol, sortDir, query);
+    }
+
+    private PagedResult<FileEvent> QuerySingleDb(string dbFile, string where,
+        List<SqliteParameter> parameters, string sortCol, string sortDir, EventQuery query)
+    {
+        try
+        {
+            using var conn = new SqliteConnection($"Data Source={dbFile};Mode=ReadOnly");
+            conn.Open();
+
+            using var countCmd = conn.CreateCommand();
+            countCmd.CommandText = $"SELECT COUNT(*) FROM events {where}";
+            countCmd.Parameters.AddRange(CloneParams(parameters));
+            var totalCount = Convert.ToInt32(countCmd.ExecuteScalar());
+
+            var offset = (query.Page - 1) * query.PageSize;
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"SELECT * FROM events {where} ORDER BY {sortCol} {sortDir} LIMIT {query.PageSize} OFFSET {offset}";
+            cmd.Parameters.AddRange(CloneParams(parameters));
+
+            var items = new List<FileEvent>(query.PageSize);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+                items.Add(ReadEvent(reader));
+
+            return new PagedResult<FileEvent>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = query.Page,
+                PageSize = query.PageSize
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to query DB: {File}", dbFile);
+            return new PagedResult<FileEvent> { Page = query.Page, PageSize = query.PageSize };
+        }
+    }
+
+    private PagedResult<FileEvent> QueryMultiDb(List<string> dbFiles, string where,
+        List<SqliteParameter> parameters, string sortCol, string sortDir, EventQuery query)
+    {
         int totalCount = 0;
 
-        foreach (var dbFile in GetRelevantDbFiles(query.From, query.To))
+        // 1단계: 각 DB의 count만 먼저 집계
+        var dbCounts = new List<(string file, int count)>();
+        foreach (var dbFile in dbFiles)
         {
             try
             {
                 using var conn = new SqliteConnection($"Data Source={dbFile};Mode=ReadOnly");
                 conn.Open();
-
                 using var countCmd = conn.CreateCommand();
                 countCmd.CommandText = $"SELECT COUNT(*) FROM events {where}";
                 countCmd.Parameters.AddRange(CloneParams(parameters));
-                totalCount += Convert.ToInt32(countCmd.ExecuteScalar());
+                var cnt = Convert.ToInt32(countCmd.ExecuteScalar());
+                totalCount += cnt;
+                dbCounts.Add((dbFile, cnt));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to count DB: {File}", dbFile);
+            }
+        }
 
+        // 2단계: 필요한 페이지 범위에 해당하는 DB에서만 데이터를 가져옴
+        var offset = (query.Page - 1) * query.PageSize;
+        var needed = query.PageSize;
+        var allItems = new List<FileEvent>(query.PageSize);
+
+        // 다중 DB → 정렬 순서에 따라 각 DB에서 상위 N개만 가져와 병합
+        // 전체를 메모리에 올리지 않고, 최대 (Page * PageSize)개만 로드
+        var maxToLoad = offset + needed;
+        foreach (var (dbFile, _) in dbCounts)
+        {
+            try
+            {
+                using var conn = new SqliteConnection($"Data Source={dbFile};Mode=ReadOnly");
+                conn.Open();
                 using var cmd = conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM events {where} ORDER BY {sortCol} {sortDir}";
+                cmd.CommandText = $"SELECT * FROM events {where} ORDER BY {sortCol} {sortDir} LIMIT {maxToLoad}";
                 cmd.Parameters.AddRange(CloneParams(parameters));
-
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                     allItems.Add(ReadEvent(reader));
@@ -291,12 +365,11 @@ public class SqliteLogRepository : IDisposable
             }
         }
 
-        // 메모리에서 정렬 + 페이징
+        // 메모리에서 최종 정렬 + 페이징 (제한된 크기)
         allItems = sortDir == "DESC"
             ? allItems.OrderByDescending(e => GetSortValue(e, sortCol)).ToList()
             : allItems.OrderBy(e => GetSortValue(e, sortCol)).ToList();
 
-        var offset = (query.Page - 1) * query.PageSize;
         var paged = allItems.Skip(offset).Take(query.PageSize).ToList();
 
         return new PagedResult<FileEvent>
