@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Audit - File Activity Logger</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <h1>Storage Audit</h1>
+    <div class="status">
+        <span class="dot" id="statusDot"></span>
+        <span>Monitoring</span>
+    </div>
+    <div class="header-info">
+        <span class="info-badge machine" id="machineNameDisplay" title="PC Name"></span>
+        <span class="info-badge storage" id="storageNameDisplay" title="Storage Name"></span>
+        <span class="info-badge drives" id="connectedDrivesDisplay" title="Connected External Drives" style="display:none;"></span>
+    </div>
+    <div class="watch-root" id="watchRootDisplay">-</div>
+    <div class="actions">
+        <button class="btn btn-sm" onclick="refreshNow()">Refresh</button>
+        <button class="btn btn-sm" onclick="openSettings()">Settings</button>
+    </div>
+</header>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-card total">
+        <div class="label">Total Events</div>
+        <div class="value" id="statTotal">0</div>
+    </div>
+    <div class="stat-card created">
+        <div class="label">Created</div>
+        <div class="value" id="statCreated">0</div>
+    </div>
+    <div class="stat-card import">
+        <div class="label">Imports</div>
+        <div class="value" id="statImports">0</div>
+    </div>
+    <div class="stat-card export">
+        <div class="label">Exports</div>
+        <div class="value" id="statExports">0</div>
+    </div>
+    <div class="stat-card delete">
+        <div class="label">Deletes</div>
+        <div class="value" id="statDeletes">0</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="label">Warnings</div>
+        <div class="value" id="statWarnings">0</div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search files, paths, notes...">
+    </div>
+
+    <select id="actionFilter">
+        <option value="">All Actions</option>
+        <option value="1">Created</option>
+        <option value="2">Modified</option>
+        <option value="3">Deleted</option>
+        <option value="4">Renamed</option>
+        <option value="5">Moved</option>
+        <option value="6">Copied</option>
+        <option value="7">Import (External)</option>
+        <option value="8">Export (External)</option>
+        <option value="9">Internal Move</option>
+    </select>
+
+    <select id="alertFilter">
+        <option value="">All Alerts</option>
+        <option value="1">Info+</option>
+        <option value="2">Warning+</option>
+        <option value="3">Critical</option>
+    </select>
+
+    <select id="datePreset" title="Quick date range">
+        <option value="">Date Range</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="3days">Last 3 Days</option>
+        <option value="7days">Last 7 Days</option>
+        <option value="30days">Last 30 Days</option>
+        <option value="custom">Custom...</option>
+    </select>
+    <input type="datetime-local" id="dateFrom" title="From date" style="display:none;">
+    <input type="datetime-local" id="dateTo" title="To date" style="display:none;">
+
+    <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary);cursor:pointer;">
+        <input type="checkbox" id="selfToggle"> Self
+    </label>
+
+    <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary);cursor:pointer;">
+        <input type="checkbox" id="autoRefreshToggle" checked> Auto
+    </label>
+
+    <div style="margin-left:auto;display:flex;gap:4px;">
+        <button class="btn btn-sm" onclick="exportData('csv')">CSV</button>
+        <button class="btn btn-sm" onclick="exportData('json')">JSON</button>
+        <button class="btn btn-sm btn-primary" onclick="exportData('html')">HTML Report</button>
+    </div>
+</div>
+
+<!-- Event Table -->
+<div class="table-container">
+    <table>
+        <colgroup>
+            <col class="col-time">
+            <col class="col-action">
+            <col class="col-file">
+            <col class="col-path">
+            <col class="col-direction">
+            <col class="col-size">
+            <col class="col-ext">
+            <col class="col-confidence">
+            <col class="col-alert">
+            <col class="col-notes">
+        </colgroup>
+        <thead>
+            <tr>
+                <th data-sort="Timestamp">Time</th>
+                <th data-sort="ActionType">Action</th>
+                <th data-sort="FileName">File</th>
+                <th>Path</th>
+                <th>Direction</th>
+                <th data-sort="FileSize">Size</th>
+                <th>Ext</th>
+                <th>Confidence</th>
+                <th data-sort="Alert">Alert</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody id="eventTableBody">
+            <tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:40px;">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+    <span class="info" id="pageInfo">-</span>
+    <div class="controls">
+        <button class="btn btn-sm" id="prevBtn" onclick="prevPage()">Prev</button>
+        <button class="btn btn-sm" id="nextBtn" onclick="nextPage()">Next</button>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+        <h2>Settings</h2>
+
+        <label>Watch Root</label>
+        <input type="text" id="watchRootInput" placeholder="e.g. D:\">
+
+        <label>Ignore Patterns (one per line)</label>
+        <textarea id="ignorePatternsInput" placeholder=".git&#10;node_modules&#10;*.tmp"></textarea>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="closeSettings()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

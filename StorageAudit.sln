@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E6EBF2AB-3212-4C87-99F0-10F2AEB94105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageAudit", "src\StorageAudit\StorageAudit.csproj", "{31FAD4A5-4618-4F98-8855-E8F01FDDC888}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CEEFD713-6036-441B-87E3-2469DAD0B7C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageAudit.Tests", "tests\StorageAudit.Tests\StorageAudit.Tests.csproj", "{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31FAD4A5-4618-4F98-8855-E8F01FDDC888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31FAD4A5-4618-4F98-8855-E8F01FDDC888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31FAD4A5-4618-4F98-8855-E8F01FDDC888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31FAD4A5-4618-4F98-8855-E8F01FDDC888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31FAD4A5-4618-4F98-8855-E8F01FDDC888} = {E6EBF2AB-3212-4C87-99F0-10F2AEB94105}
+		{10BA4A1D-BD8B-486F-ACC1-1525129BC5BE} = {CEEFD713-6036-441B-87E3-2469DAD0B7C2}
+	EndGlobalSection
+EndGlobal
