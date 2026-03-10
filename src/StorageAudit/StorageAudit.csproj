@@ -6,10 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>StorageAudit</AssemblyName>
     <RootNamespace>StorageAudit</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Publish 시에만 적용되는 설정 -->
+  <PropertyGroup Condition="'$(PublishSingleFile)' == 'true' Or '$(Configuration)' == 'Release'">
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <PublishTrimmed>false</PublishTrimmed>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
