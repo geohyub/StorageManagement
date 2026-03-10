@@ -1,0 +1,10 @@
+bin/
+obj/
+publish/
+.storageaudit/
+*.user
+*.suo
+.vs/
+*.db
+*.db-wal
+*.db-shm
