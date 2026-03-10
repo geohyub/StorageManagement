@@ -48,7 +48,8 @@ public class AuditEngine : IHostedService, IDisposable
         _repository = new SqliteLogRepository(
             _config.GetDbPath(_watchRoot),
             _loggerFactory.CreateLogger<SqliteLogRepository>(),
-            _config);
+            _config,
+            _watchRoot);
         _repository.Start();
 
         _normalizer = new EventNormalizer(

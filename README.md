@@ -75,7 +75,9 @@ E:\  (USB 드라이브 예시)
 ├── .storageaudit/                  # 시스템 폴더 (자동 생성)
 │   ├── config.json                 # 설정 파일
 │   ├── logs/
-│   │   └── audit.db                # SQLite 감사 로그 DB
+│   │   ├── audit_2026-03-10.db     # 날짜별 SQLite 감사 로그 DB
+│   │   ├── audit_2026-03-11.db
+│   │   └── ...
 │   └── exports/                    # 내보내기 결과물
 └── [사용자 파일들...]               # 감시 대상
 ```
@@ -95,7 +97,10 @@ E:\  (USB 드라이브 예시)
 
 ## 로그 저장 위치
 
-- **SQLite DB**: `.storageaudit/logs/audit.db` (WAL 모드)
+- **SQLite DB**: `.storageaudit/logs/audit_yyyy-MM-dd.db` (날짜별 분리, WAL 모드)
+  - 예: `audit_2026-03-10.db`, `audit_2026-03-11.db`, ...
+  - 자정에 자동으로 새 DB 파일 생성
+  - 조회 시 여러 날짜의 DB를 자동 합산
 - **내보내기**: `.storageaudit/exports/` 폴더
 - **설정**: `.storageaudit/config.json`
 
@@ -113,10 +118,10 @@ E:\  (USB 드라이브 예시)
 
 ## 경고 규칙
 
-- **대량 삭제**: 60초 내 10개 이상 삭제 → Critical
-- **대량 이동**: 60초 내 20개 이상 이동 → Warning
+- **대량 삭제**: 120초 내 500개 이상 삭제 → Critical
+- **대량 이동**: 120초 내 2,000개 이상 이동 → Warning
 - **외부 반출**: 파일이 저장소 밖으로 이동 → Warning
-- **대량 반출**: 60초 내 5개 이상 반출 → Critical
+- **대량 반출**: 120초 내 500개 이상 반출 → Critical
 - 임계치는 `config.json`에서 조정 가능
 
 ## 성능 최적화
@@ -138,15 +143,16 @@ E:\  (USB 드라이브 예시)
     "$RECYCLE.BIN", "System Volume Information",
     "*.tmp", "~$*", "Thumbs.db", "desktop.ini"
   ],
-  "EventBatchIntervalMs": 500,
-  "EventDeduplicationWindowMs": 2000,
+  "EventBatchIntervalMs": 300,
+  "EventDeduplicationWindowMs": 3000,
+  "MaxEventsPerBatch": 5000,
   "LogRetentionDays": 90,
   "MaxDbSizeMb": 500,
   "WebPort": 19840,
-  "BulkDeleteThreshold": 10,
-  "BulkMoveThreshold": 20,
-  "RapidEventWindowSeconds": 60,
-  "SuspiciousExportThreshold": 5
+  "BulkDeleteThreshold": 500,
+  "BulkMoveThreshold": 2000,
+  "RapidEventWindowSeconds": 120,
+  "SuspiciousExportThreshold": 500
 }
 ```
 
@@ -209,4 +215,24 @@ dotnet test
 
 ## 라이선스
 
-MIT
+MIT License
+
+Copyright (c) 2026 Junhyub
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

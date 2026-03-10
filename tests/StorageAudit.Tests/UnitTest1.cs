@@ -55,13 +55,16 @@ public class AuditConfigTests
     }
 
     [Fact]
-    public void GetDbPath_ReturnsPathInsideSystemFolder()
+    public void GetDbPath_ReturnsDateBasedPathInsideSystemFolder()
     {
         var config = new AuditConfig();
         var root = "/storage";
         var dbPath = config.GetDbPath(root);
         Assert.Contains(".storageaudit", dbPath);
-        Assert.EndsWith("audit.db", dbPath);
+        Assert.Contains("audit_", dbPath);
+        Assert.EndsWith(".db", dbPath);
+        // 날짜 형식 확인
+        Assert.Matches(@"audit_\d{4}-\d{2}-\d{2}\.db$", dbPath);
     }
 
     [Fact]
@@ -80,7 +83,7 @@ public class AuditConfigTests
         Assert.Equal(19840, config.WebPort);
         Assert.Equal(90, config.LogRetentionDays);
         Assert.Equal(500, config.MaxDbSizeMb);
-        Assert.Equal(10, config.BulkDeleteThreshold);
+        Assert.Equal(500, config.BulkDeleteThreshold);
         Assert.True(config.IncludeSubdirectories);
     }
 }
@@ -241,7 +244,7 @@ public class SqliteLogRepositoryTests : IDisposable
         using var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
         var config = new AuditConfig();
         using var repo = new SqliteLogRepository(_dbPath,
-            loggerFactory.CreateLogger<SqliteLogRepository>(), config);
+            loggerFactory.CreateLogger<SqliteLogRepository>(), config, _tempDir);
 
         Assert.True(File.Exists(_dbPath));
     }
@@ -252,7 +255,7 @@ public class SqliteLogRepositoryTests : IDisposable
         using var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
         var config = new AuditConfig { EventBatchIntervalMs = 100 };
         using var repo = new SqliteLogRepository(_dbPath,
-            loggerFactory.CreateLogger<SqliteLogRepository>(), config);
+            loggerFactory.CreateLogger<SqliteLogRepository>(), config, _tempDir);
         repo.Start();
 
         repo.Enqueue(new FileEvent
@@ -279,7 +282,7 @@ public class SqliteLogRepositoryTests : IDisposable
         using var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
         var config = new AuditConfig { EventBatchIntervalMs = 100 };
         using var repo = new SqliteLogRepository(_dbPath,
-            loggerFactory.CreateLogger<SqliteLogRepository>(), config);
+            loggerFactory.CreateLogger<SqliteLogRepository>(), config, _tempDir);
         repo.Start();
 
         repo.Enqueue(new FileEvent

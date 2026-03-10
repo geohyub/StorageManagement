@@ -76,8 +76,17 @@
         <option value="3">Critical</option>
     </select>
 
-    <input type="datetime-local" id="dateFrom" title="From date">
-    <input type="datetime-local" id="dateTo" title="To date">
+    <select id="datePreset" title="Quick date range">
+        <option value="">Date Range</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="3days">Last 3 Days</option>
+        <option value="7days">Last 7 Days</option>
+        <option value="30days">Last 30 Days</option>
+        <option value="custom">Custom...</option>
+    </select>
+    <input type="datetime-local" id="dateFrom" title="From date" style="display:none;">
+    <input type="datetime-local" id="dateTo" title="To date" style="display:none;">
 
     <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary);cursor:pointer;">
         <input type="checkbox" id="selfToggle"> Self

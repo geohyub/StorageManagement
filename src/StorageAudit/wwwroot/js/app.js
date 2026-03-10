@@ -64,16 +64,52 @@ function initializeUI() {
         loadEvents();
     });
 
+    document.getElementById('datePreset').addEventListener('change', e => {
+        const val = e.target.value;
+        const fromEl = document.getElementById('dateFrom');
+        const toEl = document.getElementById('dateTo');
+
+        if (val === 'custom') {
+            fromEl.style.display = '';
+            toEl.style.display = '';
+            return;
+        }
+
+        fromEl.style.display = 'none';
+        toEl.style.display = 'none';
+
+        const now = new Date();
+        let from = null, to = null;
+
+        if (val === 'today') {
+            from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        } else if (val === 'yesterday') {
+            from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+            to = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        } else if (val === '3days') {
+            from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3);
+        } else if (val === '7days') {
+            from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        } else if (val === '30days') {
+            from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+        }
+
+        state.query.from = from ? from.toISOString().slice(0, 16) : null;
+        state.query.to = to ? to.toISOString().slice(0, 16) : null;
+        state.query.page = 1;
+        loadData();
+    });
+
     document.getElementById('dateFrom').addEventListener('change', e => {
         state.query.from = e.target.value || null;
         state.query.page = 1;
-        loadEvents();
+        loadData();
     });
 
     document.getElementById('dateTo').addEventListener('change', e => {
         state.query.to = e.target.value || null;
         state.query.page = 1;
-        loadEvents();
+        loadData();
     });
 
     document.getElementById('selfToggle').addEventListener('change', e => {
