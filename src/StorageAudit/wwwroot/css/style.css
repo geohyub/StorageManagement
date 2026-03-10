@@ -14,7 +14,6 @@
     --border: #334155;
     --shadow: 0 1px 3px rgba(0,0,0,.3);
     --radius: 8px;
-    --header-height: 45px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,7 +22,10 @@ body {
     font-family: 'Segoe UI', -apple-system, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* === Header === */
@@ -31,13 +33,11 @@ body {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     padding: 0 24px;
-    height: var(--header-height);
+    height: 45px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
 }
 
 .header h1 {
@@ -88,6 +88,7 @@ body {
     display: flex;
     gap: 12px;
     padding: 16px 24px;
+    flex-shrink: 0;
     flex-wrap: wrap;
 }
 
@@ -117,6 +118,7 @@ body {
     align-items: center;
     gap: 10px;
     padding: 8px 24px 12px;
+    flex-shrink: 0;
     flex-wrap: wrap;
 }
 
@@ -179,8 +181,9 @@ select:hover, .btn:hover { border-color: var(--accent); }
 
 /* === Event Table === */
 .table-container {
-    padding: 0 24px 24px;
-    overflow-x: auto;
+    flex: 1;
+    overflow: auto;
+    padding: 0 24px;
 }
 
 table {
@@ -192,7 +195,7 @@ table {
     table-layout: fixed;
 }
 
-/* Column widths — 비율 기반으로 어떤 해상도에서든 균등 분배 */
+/* Column widths — 비율 기반 */
 table col.col-time       { width: 12%; }
 table col.col-action     { width: 7%;  }
 table col.col-file       { width: 14%; }
@@ -213,7 +216,7 @@ thead th {
     text-transform: uppercase;
     letter-spacing: .5px;
     position: sticky;
-    top: var(--header-height);
+    top: 0;
     z-index: 10;
     cursor: pointer;
     user-select: none;
@@ -291,6 +294,7 @@ tr.self-generated { opacity: .5; }
     align-items: center;
     justify-content: space-between;
     padding: 12px 24px;
+    flex-shrink: 0;
     border-top: 1px solid var(--border);
 }
 
@@ -369,12 +373,11 @@ tr.self-generated { opacity: .5; }
 
 /* === Responsive === */
 @media (max-width: 768px) {
-    :root { --header-height: 40px; }
     .stats-bar { gap: 8px; }
     .stat-card { min-width: 100px; padding: 10px 14px; }
     .stat-card .value { font-size: 20px; }
     .toolbar { gap: 6px; }
     .header { padding: 0 12px; }
-    .table-container { padding: 0 12px 12px; }
+    .table-container { padding: 0 12px; }
     .header .watch-root { display: none; }
 }
