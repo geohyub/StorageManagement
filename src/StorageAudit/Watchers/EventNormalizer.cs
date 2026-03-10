@@ -9,17 +9,26 @@ public class EventNormalizer
     private readonly AuditConfig _config;
     private readonly SelfEventFilter _selfFilter;
     private readonly string _watchRoot;
-    private readonly string _normalizedWatchRoot; // 캐시: 매번 Path.GetFullPath 방지
-    private readonly string _currentUser;          // 캐시: 매번 Environment.UserName 방지
+    private readonly string _normalizedWatchRoot;
+    private readonly string _currentUser;
     private readonly ILogger<EventNormalizer> _logger;
     private readonly Action<FileEvent> _onNormalized;
     private readonly ConcurrentDictionary<string, DeduplicationEntry> _recentEvents = new();
     private readonly ConcurrentDictionary<string, PendingCreateDelete> _pendingMoves = new();
     private readonly Timer _flushTimer;
 
-    // 시간순 정리용 큐: FlushPending에서 전체 순회 대신 만료된 것만 빠르게 정리
+    // 시간순 정리용 큐
     private readonly ConcurrentQueue<TimestampedKey> _pendingMoveOrder = new();
     private readonly ConcurrentQueue<TimestampedKey> _recentEventOrder = new();
+
+    // 복사(Copy) 감지용 양방향 파일 활동 추적
+    // 주 저장소(J:)에서 최근 활동한 파일명 → 타임스탬프+크기
+    private readonly ConcurrentDictionary<string, FileActivity> _primaryFileActivity
+        = new(StringComparer.OrdinalIgnoreCase);
+    // 외부 드라이브(USB 등)에서 최근 활동한 파일명 → 타임스탬프+크기
+    private readonly ConcurrentDictionary<string, FileActivity> _externalFileActivity
+        = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentQueue<TimestampedKey> _activityCleanupOrder = new();
 
     public EventNormalizer(AuditConfig config, SelfEventFilter selfFilter,
         string watchRoot, ILogger<EventNormalizer> logger,
@@ -37,37 +46,18 @@ public class EventNormalizer
             _config.EventDeduplicationWindowMs);
     }
 
-    /// <summary>
-    /// 단일 이벤트 처리 (하위 호환)
-    /// </summary>
     public void HandleRawEvent(RawFileEvent raw)
     {
-        try
-        {
-            ProcessSingleEvent(raw);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error normalizing event: {Path}", raw.FullPath);
-        }
+        try { ProcessSingleEvent(raw); }
+        catch (Exception ex) { _logger.LogError(ex, "Error normalizing event: {Path}", raw.FullPath); }
     }
 
-    /// <summary>
-    /// 배치 이벤트 처리: StorageWatcher의 DrainLoop에서 호출.
-    /// 한 번의 호출로 수백~천 개 이벤트를 처리하여 메서드 호출 오버헤드 최소화.
-    /// </summary>
     public void HandleRawEventBatch(List<RawFileEvent> batch)
     {
         for (var i = 0; i < batch.Count; i++)
         {
-            try
-            {
-                ProcessSingleEvent(batch[i]);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error normalizing event: {Path}", batch[i].FullPath);
-            }
+            try { ProcessSingleEvent(batch[i]); }
+            catch (Exception ex) { _logger.LogError(ex, "Error normalizing event: {Path}", batch[i].FullPath); }
         }
     }
 
@@ -75,18 +65,10 @@ public class EventNormalizer
     {
         switch (raw.ChangeType)
         {
-            case WatcherChangeTypes.Created:
-                HandleCreated(raw);
-                break;
-            case WatcherChangeTypes.Changed:
-                HandleChanged(raw);
-                break;
-            case WatcherChangeTypes.Deleted:
-                HandleDeleted(raw);
-                break;
-            case WatcherChangeTypes.Renamed:
-                HandleRenamed(raw);
-                break;
+            case WatcherChangeTypes.Created: HandleCreated(raw); break;
+            case WatcherChangeTypes.Changed: HandleChanged(raw); break;
+            case WatcherChangeTypes.Deleted: HandleDeleted(raw); break;
+            case WatcherChangeTypes.Renamed: HandleRenamed(raw); break;
         }
     }
 
@@ -94,19 +76,24 @@ public class EventNormalizer
     {
         var normalizedPath = NormalizePath(raw.FullPath);
         var key = string.Concat("c:", normalizedPath);
-
         if (IsDuplicate(key)) return;
 
         var fileName = Path.GetFileName(raw.FullPath);
+        var fileSize = TryGetFileSizeFast(raw.FullPath);
+        var isInPrimary = IsInsideWatchRootFast(normalizedPath);
+
+        // ── 1) 이동(Move) 감지: Delete→Create 교차 매칭 ──
         var deleteKey = string.Concat("pd:", fileName);
         if (_pendingMoves.TryRemove(deleteKey, out var pending))
         {
             var direction = DetermineDirection(pending.FullPath, raw.FullPath);
-            var actionType = direction == EventDirection.Internal
-                ? FileActionType.InternalMove
-                : direction == EventDirection.Inbound
-                    ? FileActionType.ImportedFromExternal
-                    : FileActionType.Moved;
+            var actionType = direction switch
+            {
+                EventDirection.Internal => FileActionType.InternalMove,
+                EventDirection.Inbound  => FileActionType.ImportedFromExternal,
+                EventDirection.Outbound => FileActionType.ExportedToExternal,
+                _                       => FileActionType.Moved
+            };
 
             EmitEvent(new FileEvent
             {
@@ -117,51 +104,128 @@ public class EventNormalizer
                 OldPath = pending.FullPath,
                 NewPath = raw.FullPath,
                 Direction = direction,
-                FileSizeBytes = TryGetFileSizeFast(raw.FullPath),
+                FileSizeBytes = fileSize,
                 Extension = Path.GetExtension(raw.FullPath),
-                DetectionBasis = "Delete+Create pattern",
-                Confidence = EventConfidence.High,
+                DetectionBasis = "Delete+Create cross-match (move detected)",
+                Confidence = EventConfidence.Confirmed,
                 UserAccount = _currentUser
             });
             return;
         }
 
-        var evt = new FileEvent
+        // ── 2) 복사(Copy) 감지: 양방향 파일 활동 추적 ──
+        if (isInPrimary)
         {
-            Timestamp = raw.Timestamp,
-            ActionType = FileActionType.Created,
-            FileName = fileName,
-            FullPath = raw.FullPath,
-            Direction = IsInsideWatchRootFast(normalizedPath) ? EventDirection.Internal : EventDirection.Inbound,
-            FileSizeBytes = TryGetFileSizeFast(raw.FullPath),
-            Extension = Path.GetExtension(raw.FullPath),
-            DetectionBasis = "FileSystemWatcher.Created",
-            Confidence = EventConfidence.Confirmed,
-            UserAccount = _currentUser
-        };
+            // 주 저장소에 파일 생성됨 → 최근 외부 드라이브에 같은 파일이 있었는지 확인
+            TrackActivity(_primaryFileActivity, fileName, raw.Timestamp, fileSize, raw.FullPath);
 
-        if (evt.FileSizeBytes > 0)
-        {
-            evt.Notes = "New file detected. Could be imported from external source.";
+            if (_externalFileActivity.TryGetValue(fileName, out var extActivity)
+                && IsSizeMatch(fileSize, extActivity.FileSize))
+            {
+                // 외부에 같은 파일이 있고 + 주 저장소에 새로 생성됨 = Import 복사
+                EmitEvent(new FileEvent
+                {
+                    Timestamp = raw.Timestamp,
+                    ActionType = FileActionType.ImportedFromExternal,
+                    FileName = fileName,
+                    FullPath = raw.FullPath,
+                    OldPath = extActivity.FullPath,
+                    Direction = EventDirection.Inbound,
+                    FileSizeBytes = fileSize,
+                    Extension = Path.GetExtension(raw.FullPath),
+                    DetectionBasis = "Copy detection: same file exists on external drive",
+                    Confidence = EventConfidence.Medium,
+                    UserAccount = _currentUser,
+                    Notes = $"File copied from external drive ({extActivity.FullPath})"
+                });
+                return;
+            }
+
+            // 일반 파일 생성 (외부 매칭 없음)
+            EmitEvent(new FileEvent
+            {
+                Timestamp = raw.Timestamp,
+                ActionType = FileActionType.Created,
+                FileName = fileName,
+                FullPath = raw.FullPath,
+                Direction = EventDirection.Internal,
+                FileSizeBytes = fileSize,
+                Extension = Path.GetExtension(raw.FullPath),
+                DetectionBasis = "FileSystemWatcher.Created",
+                Confidence = EventConfidence.Confirmed,
+                UserAccount = _currentUser,
+                Notes = fileSize > 0 ? "New file detected" : null
+            });
         }
+        else
+        {
+            // 외부 드라이브에 파일 생성됨 → 주 저장소에 같은 파일이 있었는지 확인
+            TrackActivity(_externalFileActivity, fileName, raw.Timestamp, fileSize, raw.FullPath);
 
-        EmitEvent(evt);
+            if (_primaryFileActivity.TryGetValue(fileName, out var primaryActivity)
+                && IsSizeMatch(fileSize, primaryActivity.FileSize))
+            {
+                // 주 저장소에 같은 파일이 있고 + 외부에 새로 생성됨 = Export 복사
+                EmitEvent(new FileEvent
+                {
+                    Timestamp = raw.Timestamp,
+                    ActionType = FileActionType.ExportedToExternal,
+                    FileName = fileName,
+                    FullPath = raw.FullPath,
+                    OldPath = primaryActivity.FullPath,
+                    Direction = EventDirection.Outbound,
+                    FileSizeBytes = fileSize,
+                    Extension = Path.GetExtension(raw.FullPath),
+                    DetectionBasis = "Copy detection: same file exists in primary storage",
+                    Confidence = EventConfidence.Medium,
+                    UserAccount = _currentUser,
+                    Notes = $"File copied to external drive from primary ({primaryActivity.FullPath})"
+                });
+                return;
+            }
+
+            // 외부 드라이브에서 생성되었으나 주 저장소와 무관한 파일
+            EmitEvent(new FileEvent
+            {
+                Timestamp = raw.Timestamp,
+                ActionType = FileActionType.Created,
+                FileName = fileName,
+                FullPath = raw.FullPath,
+                Direction = EventDirection.Outbound,
+                FileSizeBytes = fileSize,
+                Extension = Path.GetExtension(raw.FullPath),
+                DetectionBasis = "FileSystemWatcher.Created (external drive)",
+                Confidence = EventConfidence.Low,
+                UserAccount = _currentUser,
+                Notes = "File created on external drive"
+            });
+        }
     }
 
     private void HandleChanged(RawFileEvent raw)
     {
-        var key = string.Concat("m:", NormalizePath(raw.FullPath));
-
+        var normalizedPath = NormalizePath(raw.FullPath);
+        var key = string.Concat("m:", normalizedPath);
         if (IsDuplicate(key)) return;
+
+        var isInPrimary = IsInsideWatchRootFast(normalizedPath);
+        var fileName = Path.GetFileName(raw.FullPath);
+        var fileSize = TryGetFileSizeFast(raw.FullPath);
+
+        // 파일 활동 기록 (Export/Import 복사 감지에 활용)
+        if (isInPrimary)
+            TrackActivity(_primaryFileActivity, fileName, raw.Timestamp, fileSize, raw.FullPath);
+        else
+            TrackActivity(_externalFileActivity, fileName, raw.Timestamp, fileSize, raw.FullPath);
 
         EmitEvent(new FileEvent
         {
             Timestamp = raw.Timestamp,
             ActionType = FileActionType.Modified,
-            FileName = Path.GetFileName(raw.FullPath),
+            FileName = fileName,
             FullPath = raw.FullPath,
-            Direction = EventDirection.Internal,
-            FileSizeBytes = TryGetFileSizeFast(raw.FullPath),
+            Direction = isInPrimary ? EventDirection.Internal : EventDirection.Outbound,
+            FileSizeBytes = fileSize,
             Extension = Path.GetExtension(raw.FullPath),
             DetectionBasis = "FileSystemWatcher.Changed",
             Confidence = EventConfidence.Confirmed,
@@ -174,14 +238,12 @@ public class EventNormalizer
         var fileName = Path.GetFileName(raw.FullPath);
         var deleteKey = string.Concat("pd:", fileName);
 
-        var entry = new PendingCreateDelete
+        _pendingMoves[deleteKey] = new PendingCreateDelete
         {
             FullPath = raw.FullPath,
-            Timestamp = raw.Timestamp
+            Timestamp = raw.Timestamp,
+            IsFromPrimary = IsInsideWatchRootFast(NormalizePath(raw.FullPath))
         };
-
-        // 동일 파일명의 기존 pending이 있으면 덮어씀 (최신 삭제만 유효)
-        _pendingMoves[deleteKey] = entry;
         _pendingMoveOrder.Enqueue(new TimestampedKey { Key = deleteKey, Timestamp = raw.Timestamp });
     }
 
@@ -203,9 +265,13 @@ public class EventNormalizer
         else
         {
             direction = DetermineDirection(raw.OldFullPath, raw.FullPath);
-            actionType = direction == EventDirection.Internal
-                ? FileActionType.InternalMove
-                : FileActionType.Moved;
+            actionType = direction switch
+            {
+                EventDirection.Internal => FileActionType.InternalMove,
+                EventDirection.Inbound  => FileActionType.ImportedFromExternal,
+                EventDirection.Outbound => FileActionType.ExportedToExternal,
+                _                       => FileActionType.Moved
+            };
         }
 
         EmitEvent(new FileEvent
@@ -225,10 +291,6 @@ public class EventNormalizer
         });
     }
 
-    /// <summary>
-    /// 시간순 큐 기반 정리: 전체 딕셔너리 순회 대신
-    /// 만료된 엔트리만 큐 앞에서 빠르게 제거 (O(expired) vs O(total))
-    /// </summary>
     private void FlushPending(object? state)
     {
         var cutoff = DateTime.UtcNow.AddMilliseconds(-_config.EventDeduplicationWindowMs);
@@ -240,27 +302,29 @@ public class EventNormalizer
 
             if (_pendingMoves.TryRemove(tk.Key, out var pending))
             {
-                // pending의 타임스탬프가 cutoff보다 새로우면 다시 넣기
-                // (동일 키가 덮어쓰기 되었을 수 있음)
                 if (pending.Timestamp >= cutoff)
                 {
                     _pendingMoves.TryAdd(tk.Key, pending);
                     continue;
                 }
 
-                EmitEvent(new FileEvent
+                // 주 저장소에서 삭제된 파일은 반출 가능성, 외부에서 삭제된 건 무시
+                if (pending.IsFromPrimary)
                 {
-                    Timestamp = pending.Timestamp,
-                    ActionType = FileActionType.Deleted,
-                    FileName = Path.GetFileName(pending.FullPath),
-                    FullPath = pending.FullPath,
-                    Direction = EventDirection.Internal,
-                    Extension = Path.GetExtension(pending.FullPath),
-                    DetectionBasis = "FileSystemWatcher.Deleted (no matching create)",
-                    Confidence = EventConfidence.Confirmed,
-                    UserAccount = _currentUser,
-                    Notes = "File deleted. Could be exported to external destination."
-                });
+                    EmitEvent(new FileEvent
+                    {
+                        Timestamp = pending.Timestamp,
+                        ActionType = FileActionType.Deleted,
+                        FileName = Path.GetFileName(pending.FullPath),
+                        FullPath = pending.FullPath,
+                        Direction = EventDirection.Internal,
+                        Extension = Path.GetExtension(pending.FullPath),
+                        DetectionBasis = "FileSystemWatcher.Deleted (no matching create)",
+                        Confidence = EventConfidence.Confirmed,
+                        UserAccount = _currentUser,
+                        Notes = "File deleted. Could be exported to external destination."
+                    });
+                }
             }
         }
 
@@ -270,11 +334,46 @@ public class EventNormalizer
             _recentEventOrder.TryDequeue(out _);
             _recentEvents.TryRemove(rk.Key, out _);
         }
+
+        // 파일 활동 캐시 정리 (RapidEventWindowSeconds 기반)
+        var activityCutoff = DateTime.UtcNow.AddSeconds(-_config.RapidEventWindowSeconds);
+        while (_activityCleanupOrder.TryPeek(out var ak) && ak.Timestamp < activityCutoff)
+        {
+            _activityCleanupOrder.TryDequeue(out _);
+            if (ak.Key.StartsWith("p:"))
+                _primaryFileActivity.TryRemove(ak.Key[2..], out _);
+            else if (ak.Key.StartsWith("e:"))
+                _externalFileActivity.TryRemove(ak.Key[2..], out _);
+        }
     }
 
     public void ForceFlush()
     {
         FlushPending(null);
+    }
+
+    // === 유틸리티 ===
+
+    private void TrackActivity(ConcurrentDictionary<string, FileActivity> tracker,
+        string fileName, DateTime timestamp, long? fileSize, string? fullPath = null)
+    {
+        var activity = new FileActivity { Timestamp = timestamp, FileSize = fileSize, FullPath = fullPath };
+        tracker[fileName] = activity;
+
+        var prefix = ReferenceEquals(tracker, _primaryFileActivity) ? "p:" : "e:";
+        _activityCleanupOrder.Enqueue(new TimestampedKey
+        {
+            Key = string.Concat(prefix, fileName),
+            Timestamp = timestamp
+        });
+    }
+
+    private static bool IsSizeMatch(long? size1, long? size2)
+    {
+        // 둘 다 null이면 매칭 (크기 알 수 없음 → 파일명으로만 판단)
+        if (!size1.HasValue || !size2.HasValue) return true;
+        // 정확히 같은 크기
+        return size1.Value == size2.Value;
     }
 
     private bool IsDuplicate(string key)
@@ -304,9 +403,6 @@ public class EventNormalizer
         return EventDirection.Unknown;
     }
 
-    /// <summary>
-    /// 캐시된 normalizedWatchRoot 사용: Path.GetFullPath 호출 1회 절약
-    /// </summary>
     private bool IsInsideWatchRootFast(string normalizedPath)
     {
         return normalizedPath.StartsWith(_normalizedWatchRoot, StringComparison.OrdinalIgnoreCase);
@@ -316,21 +412,15 @@ public class EventNormalizer
     {
         evt.IsSelfGenerated = _selfFilter.IsSelfGenerated(evt.FullPath)
             || (evt.OldPath != null && _selfFilter.IsSelfGenerated(evt.OldPath));
-
         _onNormalized(evt);
     }
 
-    /// <summary>
-    /// 파일 크기 조회: 대량 복사 시 파일이 아직 쓰는 중일 수 있으므로
-    /// 실패하면 즉시 null 반환 (디스크 I/O 최소화)
-    /// </summary>
     private static long? TryGetFileSizeFast(string path)
     {
         try
         {
             var info = new FileInfo(path);
-            if (info.Exists)
-                return info.Length;
+            if (info.Exists) return info.Length;
         }
         catch { }
         return null;
@@ -340,6 +430,8 @@ public class EventNormalizer
     {
         return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar);
     }
+
+    // === 내부 클래스 ===
 
     private class DeduplicationEntry
     {
@@ -351,6 +443,14 @@ public class EventNormalizer
     {
         public string FullPath { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; }
+        public bool IsFromPrimary { get; set; }
+    }
+
+    private class FileActivity
+    {
+        public DateTime Timestamp { get; set; }
+        public long? FileSize { get; set; }
+        public string? FullPath { get; set; }
     }
 
     private struct TimestampedKey
