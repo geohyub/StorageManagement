@@ -25,18 +25,26 @@ public class StorageRootDetector
         var exeDir = (Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory).TrimEnd(Path.DirectorySeparatorChar);
         _logger.LogInformation("Executable directory: {Dir}", exeDir);
 
-        // 드라이브 루트인지 확인 (USB 드라이브 등은 보통 드라이브 루트)
         var driveRoot = Path.GetPathRoot(exeDir);
         if (driveRoot != null)
         {
-            // 실행 위치가 C:\ 같은 시스템 드라이브가 아닌 이동식 드라이브면 드라이브 루트 사용
             try
             {
                 var driveInfo = new DriveInfo(driveRoot);
+
+                // 이동식/네트워크 드라이브면 드라이브 루트 사용
                 if (driveInfo.DriveType == DriveType.Removable ||
                     driveInfo.DriveType == DriveType.Network)
                 {
                     _logger.LogInformation("Detected removable/network drive root: {Root}", driveRoot);
+                    return driveRoot;
+                }
+
+                // 시스템 드라이브가 아닌 고정 드라이브 (외장 HDD는 Fixed로 잡히는 경우가 많음)
+                // C:\, 시스템 드라이브를 제외한 다른 드라이브면 드라이브 루트 사용
+                if (driveInfo.DriveType == DriveType.Fixed && !IsSystemDrive(driveRoot))
+                {
+                    _logger.LogInformation("Detected non-system fixed drive root: {Root}", driveRoot);
                     return driveRoot;
                 }
             }
@@ -49,7 +57,7 @@ public class StorageRootDetector
         // 3. 실행 파일의 상위 폴더를 감시 루트로 사용
         // (exe가 StorageAudit/ 폴더 안에 있다면 한 단계 위가 저장소 루트)
         var parent = Directory.GetParent(exeDir);
-        if (parent != null && parent.FullName != driveRoot)
+        if (parent != null)
         {
             _logger.LogInformation("Using parent directory as watch root: {Root}", parent.FullName);
             return parent.FullName;
@@ -58,6 +66,26 @@ public class StorageRootDetector
         // 4. 최종 폴백: 실행 파일 디렉토리 자체
         _logger.LogInformation("Using executable directory as watch root: {Root}", exeDir);
         return exeDir;
+    }
+
+    private static bool IsSystemDrive(string driveRoot)
+    {
+        try
+        {
+            // Windows: 환경 변수로 시스템 드라이브 확인
+            var systemRoot = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            if (!string.IsNullOrEmpty(systemRoot))
+            {
+                var systemDrive = Path.GetPathRoot(systemRoot);
+                return string.Equals(driveRoot, systemDrive, StringComparison.OrdinalIgnoreCase);
+            }
+
+            // Linux/Mac: / 루트는 시스템 드라이브
+            if (driveRoot == "/") return true;
+        }
+        catch { }
+
+        return false;
     }
 
     public void EnsureSystemFolders(string watchRoot, AuditConfig config)
