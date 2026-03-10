@@ -3,11 +3,15 @@ using System.Text.Json.Serialization;
 using StorageAudit.Models;
 using StorageAudit.Services;
 
+// single-file 앱에서는 AppContext.BaseDirectory가 임시 폴더를 가리킬 수 있음
+// Environment.ProcessPath로 실제 exe 위치를 사용
+var exeDirectory = Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
+
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     Args = args,
-    ContentRootPath = AppContext.BaseDirectory,
-    WebRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot")
+    ContentRootPath = exeDirectory,
+    WebRootPath = Path.Combine(exeDirectory, "wwwroot")
 });
 
 builder.Services.AddSingleton<AuditEngine>();
@@ -22,8 +26,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var configPort = 19840;
 try
 {
-    var exeDir = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
-    foreach (var candidate in new[] { exeDir, Directory.GetParent(exeDir)?.FullName ?? exeDir })
+    var cfgExeDir = (Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory).TrimEnd(Path.DirectorySeparatorChar);
+    foreach (var candidate in new[] { cfgExeDir, Directory.GetParent(cfgExeDir)?.FullName ?? cfgExeDir })
     {
         var cp = Path.Combine(candidate, ".storageaudit", "config.json");
         if (File.Exists(cp))

@@ -21,7 +21,8 @@ public class StorageRootDetector
         }
 
         // 2. 실행 파일 위치에서 저장소 루트 추론
-        var exeDir = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+        // single-file 앱에서는 AppContext.BaseDirectory가 임시 폴더를 가리킬 수 있음
+        var exeDir = (Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory).TrimEnd(Path.DirectorySeparatorChar);
         _logger.LogInformation("Executable directory: {Dir}", exeDir);
 
         // 드라이브 루트인지 확인 (USB 드라이브 등은 보통 드라이브 루트)
