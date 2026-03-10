@@ -14,6 +14,7 @@
     --border: #334155;
     --shadow: 0 1px 3px rgba(0,0,0,.3);
     --radius: 8px;
+    --header-height: 45px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,7 +30,8 @@ body {
 .header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    padding: 12px 24px;
+    padding: 0 24px;
+    height: var(--header-height);
     display: flex;
     align-items: center;
     gap: 16px;
@@ -183,22 +185,24 @@ select:hover, .btn:hover { border-color: var(--accent); }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 13px;
     table-layout: fixed;
 }
 
-/* Column widths */
-table col.col-time { width: 155px; }
-table col.col-action { width: 90px; }
-table col.col-file { width: 180px; }
-table col.col-path { width: auto; }
-table col.col-direction { width: 80px; }
-table col.col-size { width: 72px; }
-table col.col-ext { width: 52px; }
-table col.col-confidence { width: 85px; }
-table col.col-alert { width: 70px; }
-table col.col-notes { width: 220px; }
+/* Column widths — 비율 기반으로 어떤 해상도에서든 균등 분배 */
+table col.col-time       { width: 12%; }
+table col.col-action     { width: 7%;  }
+table col.col-file       { width: 14%; }
+table col.col-path       { width: 22%; }
+table col.col-direction  { width: 7%;  }
+table col.col-size       { width: 6%;  }
+table col.col-ext        { width: 5%;  }
+table col.col-confidence { width: 7%;  }
+table col.col-alert      { width: 6%;  }
+table col.col-notes      { width: 14%; }
 
 thead th {
     background: var(--bg-secondary);
@@ -209,7 +213,7 @@ thead th {
     text-transform: uppercase;
     letter-spacing: .5px;
     position: sticky;
-    top: 56px;
+    top: var(--header-height);
     z-index: 10;
     cursor: pointer;
     user-select: none;
@@ -365,11 +369,12 @@ tr.self-generated { opacity: .5; }
 
 /* === Responsive === */
 @media (max-width: 768px) {
+    :root { --header-height: 40px; }
     .stats-bar { gap: 8px; }
     .stat-card { min-width: 100px; padding: 10px 14px; }
     .stat-card .value { font-size: 20px; }
     .toolbar { gap: 6px; }
-    .header { padding: 8px 12px; }
+    .header { padding: 0 12px; }
     .table-container { padding: 0 12px 12px; }
     .header .watch-root { display: none; }
 }
