@@ -224,13 +224,13 @@ function renderEvents() {
             <td title="${escapeAttr(e.timestamp)}">${escapeHtml(time)}</td>
             <td><span class="badge badge-${escapeAttr(e.actionType)}">${escapeHtml(e.actionType)}</span></td>
             <td title="${escapeAttr(e.fileName)}">${escapeHtml(e.fileName)}</td>
-            <td title="${escapeAttr(path)}">${path}</td>
+            <td class="cell-path" title="${escapeAttr(path)}">${path}</td>
             <td><span class="badge badge-direction-${escapeAttr(e.direction)}">${escapeHtml(e.direction)}</span></td>
             <td>${escapeHtml(size)}</td>
             <td>${escapeHtml(e.extension || '-')}</td>
             <td><span class="confidence">${escapeHtml(e.confidence)}</span></td>
             <td><span class="badge badge-alert-${escapeAttr(e.alert)}">${escapeHtml(e.alert)}</span></td>
-            <td title="${escapeAttr(e.notes || '')}">${escapeHtml(truncate(e.notes || '', 50))}</td>
+            <td class="cell-notes" title="${escapeAttr(e.notes || '')}">${escapeHtml(e.notes || '')}</td>
         </tr>`;
     }).join('');
 }
