@@ -67,6 +67,34 @@ body {
     50% { opacity: .4; }
 }
 
+.header .header-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.info-badge.machine {
+    background: #1e3a5f;
+    color: #93c5fd;
+}
+
+.info-badge.storage {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+.info-badge.drives {
+    background: #713f12;
+    color: #fde68a;
+}
+
 .header .watch-root {
     font-size: 12px;
     color: var(--text-muted);

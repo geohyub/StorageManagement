@@ -57,7 +57,9 @@ public class SqliteLogRepository : IDisposable
                 process_id INTEGER,
                 is_self_generated INTEGER NOT NULL DEFAULT 0,
                 group_id TEXT,
-                notes TEXT
+                notes TEXT,
+                machine_name TEXT,
+                storage_name TEXT
             );
 
             CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events(timestamp);
@@ -67,6 +69,24 @@ public class SqliteLogRepository : IDisposable
             CREATE INDEX IF NOT EXISTS idx_events_path ON events(full_path);
         ";
         cmd.ExecuteNonQuery();
+
+        // 기존 DB 마이그레이션: 새 컬럼 추가 (이미 있으면 무시)
+        MigrateAddColumn("machine_name", "TEXT");
+        MigrateAddColumn("storage_name", "TEXT");
+    }
+
+    private void MigrateAddColumn(string columnName, string columnType)
+    {
+        try
+        {
+            using var cmd = _writeConnection.CreateCommand();
+            cmd.CommandText = $"ALTER TABLE events ADD COLUMN {columnName} {columnType}";
+            cmd.ExecuteNonQuery();
+        }
+        catch (SqliteException)
+        {
+            // 컬럼이 이미 존재하면 무시 (duplicate column name)
+        }
     }
 
     public void Start()
@@ -142,9 +162,10 @@ public class SqliteLogRepository : IDisposable
             cmd.CommandText = @"
                 INSERT INTO events (timestamp, action_type, file_name, full_path, old_path, new_path,
                     direction, file_size_bytes, extension, detection_basis, confidence, alert_level,
-                    user_account, process_name, process_id, is_self_generated, group_id, notes)
+                    user_account, process_name, process_id, is_self_generated, group_id, notes,
+                    machine_name, storage_name)
                 VALUES ($ts, $act, $fn, $fp, $op, $np, $dir, $sz, $ext, $det, $conf, $alert,
-                    $user, $proc, $pid, $self, $grp, $notes)";
+                    $user, $proc, $pid, $self, $grp, $notes, $mname, $sname)";
 
             var pTs = cmd.Parameters.Add("$ts", SqliteType.Text);
             var pAct = cmd.Parameters.Add("$act", SqliteType.Integer);
@@ -164,6 +185,8 @@ public class SqliteLogRepository : IDisposable
             var pSelf = cmd.Parameters.Add("$self", SqliteType.Integer);
             var pGrp = cmd.Parameters.Add("$grp", SqliteType.Text);
             var pNotes = cmd.Parameters.Add("$notes", SqliteType.Text);
+            var pMname = cmd.Parameters.Add("$mname", SqliteType.Text);
+            var pSname = cmd.Parameters.Add("$sname", SqliteType.Text);
 
             foreach (var evt in batch)
             {
@@ -185,6 +208,8 @@ public class SqliteLogRepository : IDisposable
                 pSelf.Value = evt.IsSelfGenerated ? 1 : 0;
                 pGrp.Value = (object?)evt.GroupId ?? DBNull.Value;
                 pNotes.Value = (object?)evt.Notes ?? DBNull.Value;
+                pMname.Value = (object?)evt.MachineName ?? DBNull.Value;
+                pSname.Value = (object?)evt.StorageName ?? DBNull.Value;
                 cmd.ExecuteNonQuery();
             }
             transaction.Commit();
@@ -460,7 +485,7 @@ public class SqliteLogRepository : IDisposable
 
     private static FileEvent ReadEvent(SqliteDataReader reader)
     {
-        return new FileEvent
+        var evt = new FileEvent
         {
             Id = reader.GetInt64(reader.GetOrdinal("id")),
             Timestamp = DateTime.Parse(reader.GetString(reader.GetOrdinal("timestamp"))),
@@ -482,6 +507,18 @@ public class SqliteLogRepository : IDisposable
             GroupId = reader.IsDBNull(reader.GetOrdinal("group_id")) ? null : reader.GetString(reader.GetOrdinal("group_id")),
             Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? null : reader.GetString(reader.GetOrdinal("notes"))
         };
+
+        // 이전 DB 스키마 호환: machine_name, storage_name 컬럼이 없을 수 있음
+        try
+        {
+            var mnOrd = reader.GetOrdinal("machine_name");
+            evt.MachineName = reader.IsDBNull(mnOrd) ? null : reader.GetString(mnOrd);
+            var snOrd = reader.GetOrdinal("storage_name");
+            evt.StorageName = reader.IsDBNull(snOrd) ? null : reader.GetString(snOrd);
+        }
+        catch (ArgumentOutOfRangeException) { /* old schema without these columns */ }
+
+        return evt;
     }
 
     public void Dispose()

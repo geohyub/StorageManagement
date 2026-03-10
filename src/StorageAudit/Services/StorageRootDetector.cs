@@ -88,6 +88,30 @@ public class StorageRootDetector
         return false;
     }
 
+    public string DetectStorageName(string watchRoot)
+    {
+        try
+        {
+            var driveRoot = Path.GetPathRoot(watchRoot);
+            if (driveRoot != null)
+            {
+                var driveInfo = new DriveInfo(driveRoot);
+                if (driveInfo.IsReady && !string.IsNullOrWhiteSpace(driveInfo.VolumeLabel))
+                    return $"{driveInfo.VolumeLabel} ({driveRoot.TrimEnd(Path.DirectorySeparatorChar)})";
+
+                return $"{driveInfo.DriveType} ({driveRoot.TrimEnd(Path.DirectorySeparatorChar)})";
+            }
+        }
+        catch
+        {
+            // DriveInfo 접근 실패 시 (Linux 등)
+        }
+
+        // 폴백: 폴더 이름 사용
+        return Path.GetFileName(watchRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+            ?? watchRoot;
+    }
+
     public void EnsureSystemFolders(string watchRoot, AuditConfig config)
     {
         var sysFolder = config.GetSystemFolder(watchRoot);

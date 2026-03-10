@@ -150,6 +150,32 @@ async function loadStatus() {
         document.getElementById('watchRootDisplay').textContent = state.status.watchRoot || '-';
         document.getElementById('statusDot').style.background =
             state.status.isRunning ? '#22c55e' : '#ef4444';
+
+        // PC 이름 표시
+        const machineEl = document.getElementById('machineNameDisplay');
+        if (state.status.machineName) {
+            machineEl.textContent = state.status.machineName;
+            machineEl.title = `PC: ${state.status.machineName}`;
+        }
+
+        // 스토리지 이름 표시
+        const storageEl = document.getElementById('storageNameDisplay');
+        if (state.status.storageName) {
+            storageEl.textContent = state.status.storageName;
+            storageEl.title = `Storage: ${state.status.storageName}`;
+        }
+
+        // 연결된 외부 드라이브 표시
+        const drivesEl = document.getElementById('connectedDrivesDisplay');
+        const drives = state.status.connectedDrives || [];
+        if (drives.length > 0) {
+            const labels = drives.map(d => `${d.label} (${d.root})`).join(', ');
+            drivesEl.textContent = `${drives.length} drive(s)`;
+            drivesEl.title = `Connected drives: ${labels}`;
+            drivesEl.style.display = '';
+        } else {
+            drivesEl.style.display = 'none';
+        }
     } catch (e) {
         console.error('Status load error:', e);
     }

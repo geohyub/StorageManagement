@@ -64,8 +64,13 @@ app.MapGet("/api/status", (AuditEngine engine) => Results.Json(new
 {
     isRunning = engine.IsRunning,
     watchRoot = engine.WatchRoot,
+    machineName = engine.MachineName,
+    storageName = engine.StorageName,
     port = engine.Config.WebPort,
-    ignorePatterns = engine.Config.IgnorePatterns
+    ignorePatterns = engine.Config.IgnorePatterns,
+    connectedDrives = (engine.DriveWatcher?.ActiveDrives ?? new Dictionary<string, SecondaryDriveInfo>())
+        .Select(d => new { root = d.Key, label = d.Value.Label, type = d.Value.DriveType.ToString(), connectedAt = d.Value.ConnectedAt })
+        .ToArray()
 }, jsonOpts));
 
 app.MapGet("/api/stats", (AuditEngine engine, DateTime? from, DateTime? to) =>

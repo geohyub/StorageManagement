@@ -3,6 +3,10 @@ namespace StorageAudit.Models;
 public class AuditConfig
 {
     public string WatchRoot { get; set; } = string.Empty;
+    public string MachineName { get; set; } = Environment.MachineName;
+    public string StorageName { get; set; } = string.Empty;
+    public bool EnableDriveWatcher { get; set; } = true;
+    public int DriveWatcherPollIntervalMs { get; set; } = 5000;
     public List<string> IgnorePatterns { get; set; } = new()
     {
         ".storageaudit",

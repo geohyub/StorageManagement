@@ -9,7 +9,10 @@ public class AuditEngine : IHostedService, IDisposable
     private readonly ILoggerFactory _loggerFactory;
     private AuditConfig _config;
     private string _watchRoot = string.Empty;
+    private string _machineName = string.Empty;
+    private string _storageName = string.Empty;
     private StorageWatcher? _watcher;
+    private DriveWatcherService? _driveWatcher;
     private SqliteLogRepository? _repository;
     private ExportService? _exportService;
     private EventNormalizer? _normalizer;
@@ -22,6 +25,9 @@ public class AuditEngine : IHostedService, IDisposable
     public string WatchRoot => _watchRoot;
     public bool IsRunning => _watcher?.IsRunning ?? false;
     public AuditConfig Config => _config;
+    public string MachineName => _machineName;
+    public string StorageName => _storageName;
+    public DriveWatcherService? DriveWatcher => _driveWatcher;
 
     public AuditEngine(ILogger<AuditEngine> logger, ILoggerFactory loggerFactory)
     {
@@ -39,6 +45,13 @@ public class AuditEngine : IHostedService, IDisposable
         _watchRoot = detector.DetectRoot(_config);
         _config.WatchRoot = _watchRoot;
         detector.EnsureSystemFolders(_watchRoot, _config);
+
+        // PC 이름과 스토리지 이름 설정
+        _machineName = _config.MachineName;
+        _storageName = !string.IsNullOrEmpty(_config.StorageName)
+            ? _config.StorageName
+            : detector.DetectStorageName(_watchRoot);
+        _config.StorageName = _storageName;
 
         _selfFilter = new SelfEventFilter();
         _selfFilter.Initialize(_watchRoot, _config);
@@ -64,6 +77,11 @@ public class AuditEngine : IHostedService, IDisposable
             _loggerFactory.CreateLogger<StorageWatcher>());
         _watcher.Start();
 
+        // 보조 드라이브(USB 등) 자동 감시 서비스 시작
+        _driveWatcher = new DriveWatcherService(
+            _config, _normalizer, _selfFilter, _watchRoot, _loggerFactory);
+        _driveWatcher.Start();
+
         _retentionTimer = new Timer(_ => _repository.ApplyRetentionPolicy(),
             null, TimeSpan.FromHours(1), TimeSpan.FromHours(1));
 
@@ -78,16 +96,22 @@ public class AuditEngine : IHostedService, IDisposable
             Confidence = EventConfidence.Confirmed,
             Alert = AlertLevel.Info,
             IsSelfGenerated = true,
-            Notes = $"Audit engine started. Watch root: {_watchRoot}"
+            MachineName = _machineName,
+            StorageName = _storageName,
+            Notes = $"Audit engine started. Machine: {_machineName}, Storage: {_storageName}, Watch root: {_watchRoot}"
         });
 
         SaveConfig();
-        _logger.LogInformation("AuditEngine started. Watching: {Root}", _watchRoot);
+        _logger.LogInformation("AuditEngine started. Machine: {Machine}, Storage: {Storage}, Watching: {Root}",
+            _machineName, _storageName, _watchRoot);
         return Task.CompletedTask;
     }
 
     private void OnEventNormalized(FileEvent evt)
     {
+        // 모든 이벤트에 PC 이름과 스토리지 이름을 스탬프
+        evt.MachineName = _machineName;
+        evt.StorageName = _storageName;
         evt.Alert = _alertDetector!.Evaluate(evt);
         _repository!.Enqueue(evt);
     }
@@ -96,6 +120,7 @@ public class AuditEngine : IHostedService, IDisposable
     {
         _logger.LogInformation("AuditEngine stopping...");
         _retentionTimer?.Dispose();
+        _driveWatcher?.Stop();
         _watcher?.Stop();
         _normalizer?.ForceFlush();
         _repository?.Dispose();
@@ -104,12 +129,12 @@ public class AuditEngine : IHostedService, IDisposable
 
     public void UpdateWatchRoot(string newRoot)
     {
-        // 경로 검증: 실제 존재하는 디렉토리여야 함
         var fullPath = Path.GetFullPath(newRoot);
         if (!Directory.Exists(fullPath))
             throw new DirectoryNotFoundException($"Directory not found: {fullPath}");
 
         _watcher?.Stop();
+        _driveWatcher?.Stop();
         _watchRoot = fullPath;
         _config.WatchRoot = fullPath;
 
@@ -117,10 +142,24 @@ public class AuditEngine : IHostedService, IDisposable
         detector.EnsureSystemFolders(fullPath, _config);
         _selfFilter?.Initialize(fullPath, _config);
 
+        // 스토리지 이름 재감지
+        _storageName = detector.DetectStorageName(fullPath);
+        _config.StorageName = _storageName;
+
+        _normalizer = new EventNormalizer(
+            _config, _selfFilter!, fullPath,
+            _loggerFactory.CreateLogger<EventNormalizer>(),
+            OnEventNormalized);
+
         _watcher = new StorageWatcher(
-            fullPath, _config, _normalizer!, _selfFilter!,
+            fullPath, _config, _normalizer, _selfFilter!,
             _loggerFactory.CreateLogger<StorageWatcher>());
         _watcher.Start();
+
+        _driveWatcher = new DriveWatcherService(
+            _config, _normalizer, _selfFilter!, fullPath, _loggerFactory);
+        _driveWatcher.Start();
+
         SaveConfig();
     }
 
@@ -173,6 +212,7 @@ public class AuditEngine : IHostedService, IDisposable
     public void Dispose()
     {
         _retentionTimer?.Dispose();
+        _driveWatcher?.Dispose();
         _watcher?.Dispose();
         _repository?.Dispose();
     }

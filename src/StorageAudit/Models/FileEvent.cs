@@ -59,6 +59,8 @@ public class FileEvent
     public bool IsSelfGenerated { get; set; }
     public string? GroupId { get; set; }
     public string? Notes { get; set; }
+    public string? MachineName { get; set; }
+    public string? StorageName { get; set; }
 }
 
 public class EventQuery
