@@ -1,0 +1,451 @@
+[   27041ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   27041ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   27041ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   27041ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   27041ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   27041ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   29386ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   29386ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   29416ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   29416ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   29416ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   29416ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   32369ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   32369ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   32370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   32370ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   32385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   32385ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   35385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   35385ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   35385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   35385ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   35385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   35385ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   38385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   38385ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   38385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   38385ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   38385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   38385ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   41385ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   41385ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   41386ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   41386ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   41386ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   41386ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   44355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   44355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   44370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   44370ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   44371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   44371ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   47370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   47370ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   47370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   47370ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   47370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   47370ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   50355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   50355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   50355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   50355ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   50355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   50355ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   68334ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   68334ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   68350ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   68350ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   68350ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   68350ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   71371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   71371ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   71371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   71371ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   71371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   71371ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   74370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   74370ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   74370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   74370ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   74370ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   74370ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   77355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   77355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   77355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   77355ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   77362ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   77362ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   80352ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   80352ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   80352ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   80352ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   80352ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   80352ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   83355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   83355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   83355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   83355ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   83355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   83355ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   86355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   86355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   86355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   86355ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   86355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   86355ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   89371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   89371ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   89371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   89371ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   89372ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   89372ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   92354ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   92354ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   92354ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   92354ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   92355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   92355ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   95354ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   95354ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   95354ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   95354ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   95354ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   95354ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[   98355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[   98355ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[   98355ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[   98355ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[   98371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[   98371ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  101356ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[  101356ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[  101371ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[  101371ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[  101372ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[  101372ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  104365ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[  104365ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[  104365ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[  104365ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[  104365ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[  104365ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  107356ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[  107356ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[  107356ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[  107356ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[  107382ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[  107382ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  110362ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[  110362ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[  110372ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[  110372ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[  110372ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[  110372ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  113341ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/status:0
+[  113342ms] [ERROR] Status load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStatus (http://localhost:19840/js/app.js:149:34)
+    at loadData (http://localhost:19840/js/app.js:144:24)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:179
+[  113342ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/stats?:0
+[  113342ms] [ERROR] Stats load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadStats (http://localhost:19840/js/app.js:189:33)
+    at loadData (http://localhost:19840/js/app.js:144:38)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:191
+[  113389ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:19840/api/events?page=1&pageSize=50&sortBy=Timestamp&sortDesc=true:0
+[  113389ms] [ERROR] Events load error: TypeError: Failed to fetch
+    at Object.get (http://localhost:19840/js/app.js:3:27)
+    at loadEvents (http://localhost:19840/js/app.js:210:34)
+    at loadData (http://localhost:19840/js/app.js:144:51)
+    at http://localhost:19840/js/app.js:355:32 @ http://localhost:19840/js/app.js:216
+[  158197ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:19840/favicon.ico:0

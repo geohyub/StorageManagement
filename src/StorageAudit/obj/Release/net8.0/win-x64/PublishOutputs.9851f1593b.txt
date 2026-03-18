@@ -1,0 +1,2 @@
+D:\Geoview_Junhyub\2025\자산관리\소프트웨어\StorageManagement\deploy\appsettings.json
+D:\Geoview_Junhyub\2025\자산관리\소프트웨어\StorageManagement\deploy\StorageAudit.exe
